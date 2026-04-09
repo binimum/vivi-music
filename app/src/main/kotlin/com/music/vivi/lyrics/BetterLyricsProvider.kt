@@ -13,6 +13,7 @@ import com.music.vivi.utils.get
 
 object BetterLyricsProvider : LyricsProvider {
     override val name = "BetterLyrics"
+    private val isrcRegex = Regex("^[A-Z]{2}[A-Z0-9]{3}\\d{7}$")
 
     override fun isEnabled(context: Context): Boolean = context.dataStore[EnableBetterLyricsKey] ?: true
 
@@ -22,7 +23,7 @@ object BetterLyricsProvider : LyricsProvider {
         artist: String,
         duration: Int,
         album: String?,
-    ): Result<String> = BetterLyrics.getLyrics(title, artist, duration, album)
+    ): Result<String> = BetterLyrics.getLyrics(title, artist, duration, album, extractIsrc(id))
 
     override suspend fun getAllLyrics(
         id: String,
@@ -32,6 +33,11 @@ object BetterLyricsProvider : LyricsProvider {
         album: String?,
         callback: (String) -> Unit,
     ) {
-        BetterLyrics.getAllLyrics(title, artist, duration, album, callback)
+        BetterLyrics.getAllLyrics(title, artist, duration, album, extractIsrc(id), callback)
+    }
+
+    private fun extractIsrc(value: String): String? {
+        val normalized = value.uppercase()
+        return normalized.takeIf { isrcRegex.matches(it) }
     }
 }

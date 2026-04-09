@@ -1,41 +1,28 @@
 package com.music.vivi.betterlyrics.models
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TTMLResponse(
-    val ttml: String
-)
-
-@Serializable
 data class SearchResponse(
-    val results: List<Track>
+    val total: Int? = null,
+    val source: String? = null,
+    val error: String? = null,
+    val results: List<TrackResult> = emptyList(),
 )
 
 @Serializable
-data class Track(
-    val title: String,
-    val artist: String,
-    val album: String? = null,
-    val duration: Double,
-    val lyrics: Lyrics? = null
-)
-
-@Serializable
-data class Lyrics(
-    val lines: List<Line>
-)
-
-@Serializable
-data class Line(
-    val text: String,
-    val startTime: Double,
-    val words: List<Word>? = null
-)
-
-@Serializable
-data class Word(
-    val text: String,
-    val startTime: Double,
-    val endTime: Double
+data class TrackResult(
+    val id: String,
+    @SerialName("track_name")
+    val trackName: String,
+    @SerialName("artist_name")
+    val artistName: String,
+    @SerialName("album_name")
+    val albumName: String? = null,
+    val duration: Int? = null,
+    val isrc: String? = null,
+    @SerialName("timing_type")
+    val timingType: String,
+    val lyricsUrl: String,
 )
