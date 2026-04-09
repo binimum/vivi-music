@@ -72,7 +72,7 @@ object BetterLyrics {
         if (response.status == HttpStatusCode.OK) response.bodyAsText().takeIf { it.isNotBlank() } else null
     }.getOrNull()
 
-    private fun parseLrc(ttml: String): String? {
+    private fun parseTtmlToLrc(ttml: String): String? {
         val parsedLines = TTMLParser.parseTTML(ttml)
         return if (parsedLines.isEmpty()) null else TTMLParser.toLRC(parsedLines)
     }
@@ -104,7 +104,7 @@ object BetterLyrics {
             fetchWordLyricsFromLyricsPlus(title, artist, duration, album, resolvedIsrc)?.let { return it }
         }
 
-        val lrcFromStorage = fetchTTML(result.lyricsUrl)?.let(::parseLrc)
+        val lrcFromStorage = fetchTTML(result.lyricsUrl)?.let(::parseTtmlToLrc)
         if (!lrcFromStorage.isNullOrBlank()) return lrcFromStorage
 
         return fetchWordLyricsFromLyricsPlus(title, artist, duration, album, resolvedIsrc)
