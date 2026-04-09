@@ -86,7 +86,7 @@ object BetterLyrics {
     ): String? = YouLyPlus
         .getLyrics(title, artist, duration, album, isrc = isrc)
         .getOrNull()
-        ?.takeIf { WORD_SYNC_REGEX.containsMatchIn(it) }
+        ?.takeIf { wordSyncRegex.containsMatchIn(it) }
 
     private fun TrackResult.isLineSync(): Boolean = timingType.equals("line", ignoreCase = true)
 
@@ -98,16 +98,16 @@ object BetterLyrics {
         isrc: String?,
     ): String? {
         val result = searchTrack(artist, title, duration, album, isrc) ?: return null
-        val fallbackIsrc = result.isrc ?: isrc
+        val resolvedIsrc = result.isrc ?: isrc
 
         if (result.isLineSync()) {
-            fetchWordLyricsFromLyricsPlus(title, artist, duration, album, fallbackIsrc)?.let { return it }
+            fetchWordLyricsFromLyricsPlus(title, artist, duration, album, resolvedIsrc)?.let { return it }
         }
 
         val lrcFromStorage = fetchTTML(result.lyricsUrl)?.let(::parseLrc)
         if (!lrcFromStorage.isNullOrBlank()) return lrcFromStorage
 
-        return fetchWordLyricsFromLyricsPlus(title, artist, duration, album, fallbackIsrc)
+        return fetchWordLyricsFromLyricsPlus(title, artist, duration, album, resolvedIsrc)
     }
 
     suspend fun getLyrics(
@@ -135,5 +135,5 @@ object BetterLyrics {
             }
     }
 
-    private val WORD_SYNC_REGEX = Regex("<\\d{2}:\\d{2}\\.\\d{2,3}>")
+    private val wordSyncRegex = Regex("<\\d{2}:\\d{2}\\.\\d{2,3}>")
 }
