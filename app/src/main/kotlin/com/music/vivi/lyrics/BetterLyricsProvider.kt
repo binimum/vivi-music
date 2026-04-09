@@ -13,7 +13,7 @@ import com.music.vivi.utils.get
 
 object BetterLyricsProvider : LyricsProvider {
     override val name = "BetterLyrics"
-    // ISRC: 2 letters + 3 alphanumeric registrant chars + 7 digits.
+    // ISRC format (uppercase): 2 letters + 3 alphanumeric registrant chars + 7 digits.
     private val isrcRegex = Regex("^[A-Z]{2}[A-Z0-9]{3}\\d{7}$")
 
     override fun isEnabled(context: Context): Boolean = context.dataStore[EnableBetterLyricsKey] ?: true

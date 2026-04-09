@@ -88,7 +88,7 @@ object BetterLyrics {
         .getOrNull()
         ?.takeIf { wordSyncRegex.containsMatchIn(it) }
 
-    private fun TrackResult.isLineSync(): Boolean = timingType.equals("line", ignoreCase = true)
+    private fun TrackResult.isLineLevelSync(): Boolean = timingType.equals("line", ignoreCase = true)
 
     private suspend fun resolveLyrics(
         title: String,
@@ -100,7 +100,7 @@ object BetterLyrics {
         val result = searchTrack(artist, title, duration, album, isrc) ?: return null
         val resolvedIsrc = result.isrc ?: isrc
 
-        if (result.isLineSync()) {
+        if (result.isLineLevelSync()) {
             fetchWordLyricsFromLyricsPlus(title, artist, duration, album, resolvedIsrc)?.let { return it }
         }
 
@@ -135,5 +135,6 @@ object BetterLyrics {
             }
     }
 
+    // LyricsPlus word-sync timestamp format: <MM:SS.mmm> (or <MM:SS.mm>).
     private val wordSyncRegex = Regex("<\\d{2}:\\d{2}\\.\\d{2,3}>")
 }
